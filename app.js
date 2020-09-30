@@ -57,6 +57,7 @@
    ],
    quizStarted: false,
    questionNumber: 0,
+   submittingAnswer: false,
    score: 0,
    currentQuestionState: {
      answerArray: []
@@ -201,11 +202,130 @@ function renderQuiz() {
     }
   }
   }
+
+
+  //Changes value of quizStarted
+
+function startQuiz() {
+    STORE.quizStarted = true;
+  }
+
+  //Resets values to restart quiz
+
+function restartQuiz() {
+    STORE.quizStarted = false;
+    STORE.questionNumber = 0;
+    STORE.submittingAnswer = false;
+    STORE.currentQuestionState.answerArray = [];
+  }
+
+  //For submitting results to exit quiz
+
+function seeResults() {
+    STORE.quizStarted = false;
+    STORE.questionNumber ++;
+  }
+
+  //Updates current question state
+
+function currentQuestion() {
+    let index = STORE.questionNumber;
+    let questionObject =
+     STORE.questions[index];
+    return {
+      index: index + 1,
+      question: questionObject
+    };
+  }
+
+  //Moves from current question to the nextQuestion
+
+function nextQuestion() {
+    if (STORE.questionNUmber < STORE.questions.length) {
+      STORE.questionNumber++;
+      STORE.submittingAnswer = false;
+    } else if (STORE.questionNumber === STORE.questions.length) {
+      STORE.quizStarted = false;
+    }
+  }
+
+  //Vaidates checked radio against correct answer
+
+function validateAnswers() {
+    let radios = $('input:radio[name="answer"]');
+    let selectedAnswer = $('input:[name="answer"]:checked').data('answer');
+    let questionNumber = STORE.questionNumber;
+    let correctAnswer = store.questions[questionNumber].correctAnswer;
+
+    if (radios.filter(':checked').length ===0) {
+      alert('Aht aht, pick an answer please.');
+      return;
+      } else {
+      STORE.submittingAnswer = true;
+      if (slectedAnswer = correctANswer) {
+        STORE.score += 10;
+        STORE.currentQuestionState.answerArray = [true, correctAnswer, selectedAnswer];
+
+      } else {
+        STORE.currentQuestionState.answerArray = [false, correctAnswer, selectedAnswer];
+      }
+      }
+      }
+
 /********** EVENT HANDLER FUNCTIONS **********/
 
 // These functions handle events (submit, click, etc)
+function handleBeginQuizSubmit(){
+
+  $('main').on('click', '#beginQuiz', (event) =>{
+    event.preventDefault();
+    startQuiz();
+    renderQuiz();
+  });
+}
+
+function handleSubmitAnswer() {
+  $('main').on('click' , '.submit-answer', (event)=>{
+    event.preventDefault();
+    console.log('submitting answer');
+    validateAnswers();
+    renderQuiz();
+  });
+}
+
+function handleNextQuestionSubmit(){
+  $('main').on('click', '.next-question', (event) => {
+    event.preventDefault();
+    nextQuestion();
+    renderQuiz();
+  });
+}
+
+function handleSeeResultsSubmit(){
+  $('main').on('click', '.see-results', (event) => {
+    event.preventDefault();
+    seeResults();
+    renderQuiz();
+  });
+}
+
+function handleRestartQuizSubmit(){
+  $('main').on('click', '.restart-quiz', (event) => {
+    event.preventDefault();
+    restartQuiz();
+    renderQuiz();
+  });
+}
+
+
+
 function handleQuiz() {
   renderQuiz();
+  handleBeginQuizSubmit();
+  handleSubmitAnswer();
+  handleNextQuestionSubmit();
+  handleSeeResultsSubmit();
+  handleRestartQuizSubmit();
 }
 
 $(handleQuiz);
