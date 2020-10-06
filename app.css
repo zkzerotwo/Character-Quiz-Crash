@@ -9,12 +9,13 @@
 
 h1 {
 	text-align: center;
-	font-family: fantasy;
+	font-family: Tahoma;
 }
 
 body {
-  background-color: #1D2021;
-  color: #C278E1;
+  background-color: #73B2D9;
+	display: flex;
+	flex-direction: column;``
 }
 
 h1 {
@@ -22,18 +23,28 @@ h1 {
 }
 
 p {
-  font-size:24px;
+  font-size: 24px;
+	font-color: #241212;
+	text-align: center;
+	font-familty: Tahoma;
 }
 
-.welcome, .quiz-interface, .answer-response, .quiz-results {
+form {
+	font-size: 24px;
+	font-color: #121212;
+}
+
+.container {
   margin: 20px;
   padding: 26px;
-  border: 2px solid darkgoldenrod;
+  border: 2px ridge #D90F2D;
+	border-radius: 17%;
   display: flex;
   flex-direction: column;
+	align-items: center;
 }
 
-ol li {
+ol ul li {
   margin: 8px;
   font-size: 24px;
 }
@@ -45,8 +56,7 @@ input[type='radio'] {transform: scale(1.4)}
 	text-align: center;
 }
 
-.submit-answer, #beginQuiz, .restart-quiz {
-	display: block;
+button {
 	text-align: center;
 	margin: 0 auto;
 }

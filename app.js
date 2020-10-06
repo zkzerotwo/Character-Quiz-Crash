@@ -5,7 +5,7 @@
    // 5 or more questions are required
    questions: [
      {
-       question: 'Shoots lightning and stays with his trainer?',
+       question: 'Who shoots lightning and stays with his trainer?',
        answers: [
          'Chocobo',
          'Minotaur',
@@ -35,24 +35,64 @@
        correctAnswer: 'The Straw Hat Crew'
      },
      {
-       question: 'Who is the legendary hero clad in green?',
+       question: 'Who runs at supersonic speeds?',
        answers: [
-         'Luigi',
-         'Link',
-         'Lance',
-         'Lorelei'
+         'Static Shock',
+         'Inuyasha',
+         'Sonic the Hedgehog',
+         'Terry Bogard'
        ],
-       correctAnswer: 'Link'
+       correctAnswer: 'Sonic the Hedgehog'
      },
      {
-       question: 'Who bends all the elements to their will?',
+       question: 'Who tells you the princess is in another castle?',
        answers: [
-         'The Sannin',
-         'The Z Fighters',
-         'The Voltron Paladins',
-         'The Avatars'
+         'Warrior of Light',
+         'Toad',
+         'The Great Deku Tree',
+         'Johnny Bravo'
        ],
-       correctAnswer: 'The Aavtars'
+       correctAnswer: 'Toad'
+     },
+     {
+       question: 'Who protects the world from devastation to unite all peoples within our nation?',
+       answers: [
+         'Jessie!',
+         'James!',
+         'And Meowth!',
+         'Thats right!'
+       ],
+       correctAnswer: 'Thats right!'
+     },
+     {
+       question: 'Who is the Star Warrior who woke up too early?',
+       answers: [
+         'Kirby',
+         'Steve',
+         'Dr Who',
+         'All Might'
+       ],
+       correctAnswer: 'Kirby'
+     },
+     {
+       question: 'Who wears fire retardant clothes from the fire rat?',
+       answers: [
+         'Aang',
+         'Inuyasha',
+         'Misty',
+         'Sora'
+       ],
+       correctAnswer: 'Inuyasha'
+     },
+     {
+       question: 'Who wields the swords of his forefathers?',
+       answers: [
+         'Noctis Lucis Caelum',
+         'Chase Young',
+         'Kenshin Himura',
+         'Ieyasu Tokugawa'
+       ],
+       correctAnswer: 'Noctis Lucis Caelum'
      },
    ],
    quizStarted: false,
@@ -85,7 +125,7 @@
 
 function generateWelcomeScreen() {
   return `
-  <div class="welcome">
+  <div class="welcome container">
     <form>
       <p>
         How do you do? Are you ready to take on this Character Quiz?
@@ -101,7 +141,7 @@ function generateWelcomeScreen() {
 
 function generateQuizInterface(questionObject) {
   return `
-  <div class="quiz-interface">
+  <div class="quiz-interface container">
     <p>Question ${questionObject.index} / ${STORE.questions.length}
     </p>
     <p>
@@ -111,13 +151,14 @@ function generateQuizInterface(questionObject) {
       <ul>
         ${generateAnswerArray(questionObject.question.answers)}
       </ul>
+      <button type="submit" class="submit-answer" autofocus>Submit Answer</button>
     </form>
   </div>`
 }
 
 //Creates answer array for each answer option
 
-function generateAnswerArray() {
+function generateAnswerArray(answers) {
   let answerArray = [];
   let indexArray = [];
   answers.forEach(answer => {
@@ -129,7 +170,7 @@ function generateAnswerArray() {
 
 //Makes strings of each answer and radio buttons
 
-function stringifyQuizAnswers() {
+function stringifyQuizAnswers(answer) {
   let questionNumber = STORE.questionNumber;
   let name = STORE.questions[questionNumber].answers.indexOf(answer);
   return `
@@ -154,14 +195,14 @@ function generateAnswerResults() {
 
   let correctResponse = `Good job! "${answerArray[1]}" is right.`;
   let incorrectResponse = `Yikes, ${answerArray[2]} is wrong. ${answerArray[1]} is the correct answer.`;
-  let isFinalQuestion = (STORE.questionNumber + 1) === (store.questions.length);
+  let isFinalQuestion = (STORE.questionNumber + 1) === (STORE.questions.length);
 
   return `
-    <div class="answer-response">
+    <div class="answer-response container">
     <form>
     <p>${answerArray[0] === true ? correctResponse : incorrectResponse}</p>
-    <p> Score: ${store.score}</p>
-    ${isLastQuestion ? buttons.results : buttons.next}
+    <p> Score: ${STORE.score}</p>
+    ${isFinalQuestion ? buttons.results : buttons.next}
     </form>
     </div>
     `;
@@ -171,7 +212,7 @@ function generateAnswerResults() {
 
 function generateQuizResults() {
   return `
-    <div class='quiz-results'>
+    <div class='quiz-results container'>
       <p>
        You're finished!
          </p>
@@ -197,7 +238,7 @@ function renderQuiz() {
   } else if (STORE.quizStarted === true) {
     if(STORE.submittingAnswer === false) {
       $('main').html(generateQuizInterface(currentQuestion()))
-    } else if(STORE.subnittingANswer === true) {
+    } else if(STORE.submittingAnswer === true) {
       $('main').html(generateAnswerResults())
     }
   }
@@ -216,6 +257,7 @@ function restartQuiz() {
     STORE.quizStarted = false;
     STORE.questionNumber = 0;
     STORE.submittingAnswer = false;
+    STORE.score = 0;
     STORE.currentQuestionState.answerArray = [];
   }
 
@@ -241,7 +283,7 @@ function currentQuestion() {
   //Moves from current question to the nextQuestion
 
 function nextQuestion() {
-    if (STORE.questionNUmber < STORE.questions.length) {
+    if (STORE.questionNumber < STORE.questions.length) {
       STORE.questionNumber++;
       STORE.submittingAnswer = false;
     } else if (STORE.questionNumber === STORE.questions.length) {
@@ -253,16 +295,16 @@ function nextQuestion() {
 
 function validateAnswers() {
     let radios = $('input:radio[name="answer"]');
-    let selectedAnswer = $('input:[name="answer"]:checked').data('answer');
+    let selectedAnswer = $('input[name="answer"]:checked').data('answer');
     let questionNumber = STORE.questionNumber;
-    let correctAnswer = store.questions[questionNumber].correctAnswer;
+    let correctAnswer = STORE.questions[questionNumber].correctAnswer;
 
-    if (radios.filter(':checked').length ===0) {
+    if (radios.filter(':checked').length === 0) {
       alert('Aht aht, pick an answer please.');
       return;
       } else {
       STORE.submittingAnswer = true;
-      if (slectedAnswer = correctANswer) {
+      if (selectedAnswer === correctAnswer) {
         STORE.score += 10;
         STORE.currentQuestionState.answerArray = [true, correctAnswer, selectedAnswer];
 
@@ -277,7 +319,7 @@ function validateAnswers() {
 // These functions handle events (submit, click, etc)
 function handleBeginQuizSubmit(){
 
-  $('main').on('click', '#beginQuiz', (event) =>{
+  $('main').on('click', '#beginQuiz', (event) => {
     event.preventDefault();
     startQuiz();
     renderQuiz();
@@ -285,7 +327,7 @@ function handleBeginQuizSubmit(){
 }
 
 function handleSubmitAnswer() {
-  $('main').on('click' , '.submit-answer', (event)=>{
+  $('main').on('click' , '.submit-answer', (event) => {
     event.preventDefault();
     console.log('submitting answer');
     validateAnswers();
